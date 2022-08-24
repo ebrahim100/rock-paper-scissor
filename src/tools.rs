@@ -14,8 +14,8 @@
 
   #[derive(Debug)]
   pub struct Result {
-      user: Game,
-      computer: Game,
-      result: Hand,
-      round: i32,
+    pub user: Game,
+    pub computer: Game,
+    pub result: Hand,
+    pub round: i32,
   }
