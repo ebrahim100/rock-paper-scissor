@@ -1,30 +1,11 @@
+mod tools;
+use tools::*;
+
 use std::io;
 use rand::Rng;
 
-#[derive(Debug)]
-enum Game {
-    STONE,
-    PAPER,
-    SCISSOR,
-}
 
-#[derive(Debug)]
-enum Hand {
-    WON,
-    LOST,
-    DRAW,
-}
-
-#[derive(Debug)]
-struct Result {
-    user: Game,
-    computer: Game,
-    result: Hand,
-    round: i32,
-}
-
-
-fn parse_game(input: i32) -> Option<Game> {
+fn parse_game(input: i32) -> Option<tools::Game> {
     match input {
         1 => Some(Game::from(Game::STONE)),
         2 => Some(Game::from(Game::PAPER)),
@@ -86,7 +67,13 @@ fn main() {
             .expect("Faild to read line");
 
         start_game(round.trim().parse().expect("Please type a number"));
-        break;
+
+        println!("Do you want to play again [y/n]");
+        let ans = String::new();
+        if ans.eq_ignore_ascii_case("n") {
+            println!("bye");
+            break;
+        }
     }
 
 }
