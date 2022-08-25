@@ -1,3 +1,4 @@
+
   #[derive(Debug)]
  pub  enum Game {
     STONE,
@@ -13,7 +14,7 @@
   }
 
   #[derive(Debug)]
-  pub struct Result {
+  pub struct ResultU {
     pub user: Game,
     pub computer: Game,
     pub result: Hand,

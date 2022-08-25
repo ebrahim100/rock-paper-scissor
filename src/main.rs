@@ -1,9 +1,27 @@
 mod tools;
 use tools::*;
 
-use std::io;
+use std::{io, num::ParseIntError};
 use rand::Rng;
 
+fn read_num () -> Result<i32, ParseIntError> {
+    let mut input: String = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Error.");
+
+    return input.trim().parse::<i32>();
+}
+
+fn read_ans () -> String {
+    let mut input: String = String::new();
+
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Error.");
+
+    return input;
+} 
 
 fn parse_game(input: i32) -> Option<tools::Game> {
     match input {
@@ -14,11 +32,11 @@ fn parse_game(input: i32) -> Option<tools::Game> {
     }
 }
 
-fn play_game(round: i32, user_hand: Game) -> Result {
+fn play_game(round: i32, user_hand: Game) -> ResultU {
        let mut random_input = rand::thread_rng();
        let computer_hand = parse_game(random_input.gen_range(1..=3)).unwrap();
        let hand_result = get_result(&user_hand, &computer_hand);
-       return Result {
+       return ResultU {
         user: user_hand,
         computer: computer_hand,
         result: hand_result,
@@ -46,61 +64,24 @@ fn get_result(user_hand: &Game, computer_hand: &Game) -> Hand {
     }
 }
 
-fn main() {
-    println!("Hi! Let's play game\nPress Y to continue or other key to cancel ...");
-
-    let mut key = String::new();
-
-    io::stdin()
-        .read_line(&mut key)
-        .expect("Faild to read line");
-
-    if key.eq_ignore_ascii_case("Y") {
-        println!("Exit");
-        std::process::abort();
-    }
-
-    loop {
-        println!("how many round you want to play?");
-        let mut round: String = String::new();
-        io::stdin().read_line(&mut round)
-            .expect("Faild to read line");
-
-        start_game(round.trim().parse().expect("Please type a number"));
-
-        println!("Do you want to play again [y/n]");
-        let ans = String::new();
-        if ans.eq_ignore_ascii_case("n") {
-            println!("bye");
-            break;
-        }
-    }
-
-}
-
 fn start_game(round: i32) {
     let mut count = 0;
-    let mut collect_result: Vec<Result> = Vec::new();
+    let mut collect_result: Vec<ResultU> = Vec::new();
+
     loop {
-        let mut input: String = String::new();
         println!("round {}, [1]stone [2]paper [3]scissor", count + 1);
+        let num = read_num();
 
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Error.");
+        if num.is_ok() {
+            let get_value = parse_game(num.unwrap());
 
-        let get_value = parse_game(input.trim().parse().expect("something went wrong"));
-
-        if get_value.is_some() {
-           let res =  play_game(count, get_value.unwrap());
-           println!("Result: {:?}, your hand: {:?}, computer hand {:?}", res.result, res.user, res.computer);
-           collect_result.push(res);
-           count += 1;
-        }else {
-            println!("wrong input: try again");
+            if get_value.is_some() {
+                let res =  play_game(count, get_value.unwrap());
+                println!("Result: {:?}, your hand: {:?}, computer hand {:?}", res.result, res.user, res.computer);
+                collect_result.push(res);
+                count += 1;
+            }
         }
-
-         
 
         if count == round {
             println!("End Of Game.\nResult");
@@ -111,3 +92,37 @@ fn start_game(round: i32) {
 
     }
 }
+
+
+fn main() {
+    println!("Hi! Let's play game\nPress [Y] to continue or other key to cancel ...");
+
+    let key = read_ans();
+    if !key.trim().eq("y") {
+        println!("Exit");
+        std::process::abort();
+    } 
+
+    loop {
+        println!("how many round you want to play?");
+        let num = read_num();
+
+        if num.is_ok() {
+            start_game(num.unwrap());
+
+            println!("Do you want to play again? press n to exit ");
+            let ans = read_ans();
+
+            if ans.trim().eq_ignore_ascii_case("n") {
+                println!("bye");
+                break;
+            }
+        } else {
+            println!("please write a correct number")
+        }
+    
+    }
+
+}
+
+
